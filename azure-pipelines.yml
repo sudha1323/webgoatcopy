@@ -1,4 +1,12 @@
 trigger:
+- task: Application security testing@2024
+  inputs:
+    projectName: 'Cxsast_azure'
+    enableProxy: false
+    enableSastScan: true
+    enableSastBranching: true
+    masterBranchProjectName: 'main'
+    enableDependencyScan: false
 - main
 
 pool:
