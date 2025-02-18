@@ -51,9 +51,11 @@ jobs:
         run: |
           echo "Running linting..."
           npm run lint  # Example for JavaScript/TypeScript projects
-          - name: Debug Maven build
-              run: |
-    mvn clean install || exit 254  # Force exit code if the build fails
+
+      # Debug Maven build (this step was incorrectly indented)
+      - name: Debug Maven build
+        run: |
+          mvn clean install || exit 254  # Force exit code if the build fails
 
       # Security Scan Step
       - name: Run Checkmarx Security Scan
@@ -106,7 +108,7 @@ jobs:
           scanners: "sast"  # Vulnerability Scanners (e.g., sast, sca, cxgo)
           # extra_certificates: ""  # Optional: Path to extra certificates (if any)
           # sca_api_url: "https://api.scacheckmarx.com"  # Optional: SCA API URL
-          # sca_app_url: "https://sca.scacheckmarx.com"  # Optional: SCA App URL
+          # sca_app_url: "https://sca.scachemarx.com"  # Optional: SCA App URL
           # sca_access_control_url: "https://platform.checkmarx.net"  # Optional: SCA Access Control URL
           # sca_tenant: ""  # Optional: SCA Tenant
           # sca_username: ""  # Optional: SCA Username
