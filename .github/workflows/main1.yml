@@ -51,6 +51,9 @@ jobs:
         run: |
           echo "Running linting..."
           npm run lint  # Example for JavaScript/TypeScript projects
+          - name: Debug Maven build
+              run: |
+    mvn clean install || exit 254  # Force exit code if the build fails
 
       # Security Scan Step
       - name: Run Checkmarx Security Scan
