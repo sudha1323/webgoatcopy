@@ -22,11 +22,17 @@ jobs:
       - name: Setup Java JDK
         uses: actions/setup-java@v4.7.0
         with:
-         java-version: '11'
-         distribution: 'adoptopenjdk'
-         java-package: 'jdk'
-         architecture: 'x64'
-         check-latest: true
+          java-version: '11'
+          distribution: 'adoptium'  # Correct distribution
+          java-package: 'jdk'
+          architecture: 'x64'
+          check-latest: true
+          server-id: 'github'
+          server-username: 'GITHUB_ACTOR'
+          server-password: 'GITHUB_TOKEN'
+          overwrite-settings: true
+          job-status: 'success'
+          token: ${{ secrets.GITHUB_TOKEN }}  # You can securely use the GitHub token
 
       # Build Step
       - name: Build the project
@@ -87,34 +93,34 @@ jobs:
           checkmarx_password: "Ramji@2811"  # Your Checkmarx password (store in secrets ideally)
           checkmarx_client_secret: "014DF517-39D1-4453-B7B3-9930C563627C"  # Your Checkmarx client secret
           project: "YOUR_PROJECT_ID"  # Replace with actual project ID
-         # app: "SampleApp"  # Optional: Application name used by downstream bug trackers
-          #preset: "High and Medium"  # Optional: Scan preset
-         # break_build: true  # Optional: Whether to break the build based on findings
-         # bug_tracker: "Sarif"  # Optional: Bug tracker for the scan results
-          #incremental: true  # Optional: Enable incremental scans
-          #params: ""  # Optional: Additional CLI parameters
+          # app: "SampleApp"  # Optional: Application name used by downstream bug trackers
+          # preset: "High and Medium"  # Optional: Scan preset
+          # break_build: true  # Optional: Whether to break the build based on findings
+          # bug_tracker: "Sarif"  # Optional: Bug tracker for the scan results
+          # incremental: true  # Optional: Enable incremental scans
+          # params: ""  # Optional: Additional CLI parameters
           github_token: ${{ secrets.GITHUB_TOKEN }}  # Use the default GitHub token
           scanners: "sast"  # Vulnerability Scanners (e.g., sast, sca, cxgo)
-          #extra_certificates: ""  # Optional: Path to extra certificates (if any)
-         # sca_api_url: "https://api.scacheckmarx.com"  # Optional: SCA API URL
-          #sca_app_url: "https://sca.scacheckmarx.com"  # Optional: SCA App URL
-         # sca_access_control_url: "https://platform.checkmarx.net"  # Optional: SCA Access Control URL
-          #sca_tenant: ""  # Optional: SCA Tenant
-          #sca_username: ""  # Optional: SCA Username
-          #sca_password: ""  # Optional: SCA Password
-          #cxgo_client_secret: ""  # Optional: CxGo Client Secret
-          #cxgo_base_url: "https://api.checkmarx.net"  # Optional: CxGo API URL
-          #cxgo_portal_url: "https://cloud.checkmarx.net"  # Optional: CxGo Portal URL
-          #java_opts: "-XX:MaxRAMPercentage=75.0"  # Optional: Java options
-          #jira_url: ""  # Optional: Jira URL
-         # jira_username: ""  # Optional: Jira Username
-         # jira_token: ""  # Optional: Jira Token
-          #jira_project: ""  # Optional: Jira Project
-          #jira_issue_type: ""  # Optional: Jira Issue Type
-          #jira_open_transition: ""  # Optional: Jira Open Transition
-          #jira_close_transition: ""  # Optional: Jira Close Transition
-          #jira_open_status: ""  # Optional: Jira Open Status
-          #jira_closed_status: ""  # Optional: Jira Closed Status
+          # extra_certificates: ""  # Optional: Path to extra certificates (if any)
+          # sca_api_url: "https://api.scacheckmarx.com"  # Optional: SCA API URL
+          # sca_app_url: "https://sca.scacheckmarx.com"  # Optional: SCA App URL
+          # sca_access_control_url: "https://platform.checkmarx.net"  # Optional: SCA Access Control URL
+          # sca_tenant: ""  # Optional: SCA Tenant
+          # sca_username: ""  # Optional: SCA Username
+          # sca_password: ""  # Optional: SCA Password
+          # cxgo_client_secret: ""  # Optional: CxGo Client Secret
+          # cxgo_base_url: "https://api.checkmarx.net"  # Optional: CxGo API URL
+          # cxgo_portal_url: "https://cloud.checkmarx.net"  # Optional: CxGo Portal URL
+          # java_opts: "-XX:MaxRAMPercentage=75.0"  # Optional: Java options
+          # jira_url: ""  # Optional: Jira URL
+          # jira_username: ""  # Optional: Jira Username
+          # jira_token: ""  # Optional: Jira Token
+          # jira_project: ""  # Optional: Jira Project
+          # jira_issue_type: ""  # Optional: Jira Issue Type
+          # jira_open_transition: ""  # Optional: Jira Open Transition
+          # jira_close_transition: ""  # Optional: Jira Close Transition
+          # jira_open_status: ""  # Optional: Jira Open Status
+          # jira_closed_status: ""  # Optional: Jira Closed Status
 
   deploy:
     needs: checkmarx-cxflow
