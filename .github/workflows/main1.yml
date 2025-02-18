@@ -21,9 +21,9 @@ jobs:
       # Setup Java JDK
       - name: Setup Java JDK
         uses: actions/setup-java@v4.7.0
-       # with:
+        with:
         #  java-version: '11'
-         # distribution: 'adoptopenjdk'
+          distribution: 'adoptopenjdk'
          # java-package: 'jdk'
          # architecture: 'x64'
          # check-latest: true
