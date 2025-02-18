@@ -46,12 +46,7 @@ jobs:
           echo "Running tests..."
           mvn test  # Example for Maven projects
 
-      # Lint Step (optional, adjust based on your project)
-      - name: Run linting
-        run: |
-          echo "Running linting..."
-          npm run lint  # Example for JavaScript/TypeScript projects
-
+     
       # Debug Maven build (this step was incorrectly indented)
       - name: Debug Maven build
         run: |
