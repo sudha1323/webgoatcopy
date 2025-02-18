@@ -1,4 +1,4 @@
- # GitHub Actions Workflow for Security Scan, Build, Test, and Deployment
+# GitHub Actions Workflow for Security Scan, Build, Test, and Deployment
 
 name: Security Scan and Deployment Pipeline
 
@@ -18,39 +18,41 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         
-      # Build Step
-      - name: Set up JDK (example for Java projects)
-        uses: actions/setup-java@v2
+      # Setup Java JDK
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4.7.0
         with:
-          java-version: '11'  # Adjust according to your project requirements
-        
+          java-version: '11'
+          distribution: 'adoptopenjdk'
+          java-package: 'jdk'
+          architecture: 'x64'
+          check-latest: true
+
+      # Build Step
       - name: Build the project
         run: |
           echo "Running build..."
-          # Replace with your specific build command, e.g., Maven or Gradle
           mvn clean install  # Example for Maven projects
 
       # Test Step
       - name: Run tests
         run: |
           echo "Running tests..."
-          # Replace with your test command, e.g., Maven, Gradle, or Jest
           mvn test  # Example for Maven projects
 
       # Lint Step (optional, adjust based on your project)
       - name: Run linting
         run: |
           echo "Running linting..."
-          # Add your linting command here, e.g., ESLint, pylint, flake8
           npm run lint  # Example for JavaScript/TypeScript projects
 
       # Security Scan Step
       - name: Run Checkmarx Security Scan
         env:
-          CHECKMARX_URL: "http://sudhat-lt"  # Your Checkmarx base URL
-          CHECKMARX_API_TOKEN: ${{ secrets.CHECKMARX_API_TOKEN }}  # Store token in GitHub Secrets
-          CHECKMARX_USERNAME: "sudha"  # Your Checkmarx username
-          CHECKMARX_PASSWORD: "Ramji@2811"  # Your Checkmarx password (consider storing it in secrets)
+          CHECKMARX_URL: "http://sudhat-lt"
+          CHECKMARX_API_TOKEN: ${{ secrets.CHECKMARX_API_TOKEN }}
+          CHECKMARX_USERNAME: "sudha"
+          CHECKMARX_PASSWORD: "Ramji@2811"
           CHECKMARX_CLIENT_ID: "resource_owner_client"
           CHECKMARX_CLIENT_SECRET: "014DF517-39D1-4453-B7B3-9930C563627C"
           CHECKMARX_SCOPE: "access_control_api sast_rest_api"
@@ -61,15 +63,61 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{
                   "name": "GitHub Scan",
-                  "projectId": "YOUR_PROJECT_ID",  # Replace with actual project ID
+                  "projectId": "YOUR_PROJECT_ID",
                   "branch": "main",
                   "presetId": "Checkmarx Default",
                   "configuration": "Default Configuration",
                   "filter": {"categories": ["SQL_Injection", "Stored_XSS", "Reflected_XSS_All_Clients"]}
                 }'
 
-  deploy:
+  checkmarx-cxflow:
     needs: build-and-scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Checkmarx CxFlow Action
+        uses: checkmarx-ts/checkmarx-cxflow-github-action@v2.3
+        with:
+          checkmarx_url: "http://sudhat-lt"  # Your Checkmarx base URL
+          team: "/CxServer" # Specify your Checkmarx team
+          checkmarx_username: "sudha"  # Your Checkmarx username
+          checkmarx_password: "Ramji@2811"  # Your Checkmarx password (store in secrets ideally)
+          checkmarx_client_secret: "014DF517-39D1-4453-B7B3-9930C563627C"  # Your Checkmarx client secret
+          project: "YOUR_PROJECT_ID"  # Replace with actual project ID
+         # app: "SampleApp"  # Optional: Application name used by downstream bug trackers
+          #preset: "High and Medium"  # Optional: Scan preset
+         # break_build: true  # Optional: Whether to break the build based on findings
+         # bug_tracker: "Sarif"  # Optional: Bug tracker for the scan results
+          #incremental: true  # Optional: Enable incremental scans
+          #params: ""  # Optional: Additional CLI parameters
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # Use the default GitHub token
+          scanners: "sast"  # Vulnerability Scanners (e.g., sast, sca, cxgo)
+          #extra_certificates: ""  # Optional: Path to extra certificates (if any)
+         # sca_api_url: "https://api.scacheckmarx.com"  # Optional: SCA API URL
+          #sca_app_url: "https://sca.scacheckmarx.com"  # Optional: SCA App URL
+         # sca_access_control_url: "https://platform.checkmarx.net"  # Optional: SCA Access Control URL
+          #sca_tenant: ""  # Optional: SCA Tenant
+          #sca_username: ""  # Optional: SCA Username
+          #sca_password: ""  # Optional: SCA Password
+          #cxgo_client_secret: ""  # Optional: CxGo Client Secret
+          #cxgo_base_url: "https://api.checkmarx.net"  # Optional: CxGo API URL
+          #cxgo_portal_url: "https://cloud.checkmarx.net"  # Optional: CxGo Portal URL
+          #java_opts: "-XX:MaxRAMPercentage=75.0"  # Optional: Java options
+          #jira_url: ""  # Optional: Jira URL
+         # jira_username: ""  # Optional: Jira Username
+         # jira_token: ""  # Optional: Jira Token
+          #jira_project: ""  # Optional: Jira Project
+          #jira_issue_type: ""  # Optional: Jira Issue Type
+          #jira_open_transition: ""  # Optional: Jira Open Transition
+          #jira_close_transition: ""  # Optional: Jira Close Transition
+          #jira_open_status: ""  # Optional: Jira Open Status
+          #jira_closed_status: ""  # Optional: Jira Closed Status
+
+  deploy:
+    needs: checkmarx-cxflow
     runs-on: ubuntu-latest
     environment:
       name: staging
@@ -81,7 +129,6 @@ jobs:
       - name: Deploy to Staging
         run: |
           echo "Deploying to staging environment..."
-          # Add your staging deployment commands here, for example:
           ./deploy-to-staging.sh  # Replace with your script or commands
 
   production-deploy:
@@ -98,5 +145,4 @@ jobs:
       - name: Deploy to Production
         run: |
           echo "Deploying to production environment..."
-          # Add your production deployment commands here
           ./deploy-to-production.sh  # Replace with your script or commands
