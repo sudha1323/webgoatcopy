@@ -22,11 +22,11 @@ jobs:
       - name: Setup Java JDK
         uses: actions/setup-java@v4.7.0
         with:
-        #  java-version: '11'
-          distribution: 'adoptopenjdk'
-         # java-package: 'jdk'
-         # architecture: 'x64'
-         # check-latest: true
+         java-version: '11'
+         distribution: 'adoptopenjdk'
+         java-package: 'jdk'
+         architecture: 'x64'
+         check-latest: true
 
       # Build Step
       - name: Build the project
