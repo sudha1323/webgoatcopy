@@ -1,0 +1,102 @@
+ # GitHub Actions Workflow for Security Scan, Build, Test, and Deployment
+
+name: Security Scan and Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Trigger the pipeline on pushes to the main branch
+  pull_request:
+    branches:
+      - main  # Trigger on PRs to the main branch
+
+jobs:
+  build-and-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      # Build Step
+      - name: Set up JDK (example for Java projects)
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'  # Adjust according to your project requirements
+        
+      - name: Build the project
+        run: |
+          echo "Running build..."
+          # Replace with your specific build command, e.g., Maven or Gradle
+          mvn clean install  # Example for Maven projects
+
+      # Test Step
+      - name: Run tests
+        run: |
+          echo "Running tests..."
+          # Replace with your test command, e.g., Maven, Gradle, or Jest
+          mvn test  # Example for Maven projects
+
+      # Lint Step (optional, adjust based on your project)
+      - name: Run linting
+        run: |
+          echo "Running linting..."
+          # Add your linting command here, e.g., ESLint, pylint, flake8
+          npm run lint  # Example for JavaScript/TypeScript projects
+
+      # Security Scan Step
+      - name: Run Checkmarx Security Scan
+        env:
+          CHECKMARX_URL: "http://sudhat-lt"  # Your Checkmarx base URL
+          CHECKMARX_API_TOKEN: ${{ secrets.CHECKMARX_API_TOKEN }}  # Store token in GitHub Secrets
+          CHECKMARX_USERNAME: "sudha"  # Your Checkmarx username
+          CHECKMARX_PASSWORD: "Ramji@2811"  # Your Checkmarx password (consider storing it in secrets)
+          CHECKMARX_CLIENT_ID: "resource_owner_client"
+          CHECKMARX_CLIENT_SECRET: "014DF517-39D1-4453-B7B3-9930C563627C"
+          CHECKMARX_SCOPE: "access_control_api sast_rest_api"
+        run: |
+          echo "Running Checkmarx security scan..."
+          curl -X POST "${CHECKMARX_URL}/cxrestapi/sast/scans" \
+            -H "Authorization: Bearer ${CHECKMARX_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{
+                  "name": "GitHub Scan",
+                  "projectId": "YOUR_PROJECT_ID",  # Replace with actual project ID
+                  "branch": "main",
+                  "presetId": "Checkmarx Default",
+                  "configuration": "Default Configuration",
+                  "filter": {"categories": ["SQL_Injection", "Stored_XSS", "Reflected_XSS_All_Clients"]}
+                }'
+
+  deploy:
+    needs: build-and-scan
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to Staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add your staging deployment commands here, for example:
+          ./deploy-to-staging.sh  # Replace with your script or commands
+
+  production-deploy:
+    needs: deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://your-production-url.com  # Optional production URL
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to Production
+        run: |
+          echo "Deploying to production environment..."
+          # Add your production deployment commands here
+          ./deploy-to-production.sh  # Replace with your script or commands
