@@ -84,7 +84,7 @@ jobs:
       - name: Checkmarx CxFlow Action
         uses: checkmarx-ts/checkmarx-cxflow-github-action@v2.3
         with:
-          checkmarx_url: "http://sudhat-lt"  # Your Checkmarx base URL
+          checkmarx_url: "http://sudhat-lt/CxWebClient"  # Your Checkmarx base URL
           team: "/CxServer" # Specify your Checkmarx team
           checkmarx_username: "sudha"  # Your Checkmarx username
           checkmarx_password: "Ramji@2811"  # Your Checkmarx password (store in secrets ideally)
