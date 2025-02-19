@@ -1,15 +1,29 @@
-name: Checkmarx SAST Scan
-on: [push]
+name: Security Scan and Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
-  build:
+  build-and-scan:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v1
-    - name: Checkmarx Action
-      uses: miguelfreitas93/checkmarx-github-action@v1
-      with:
-        cxServer: http://sudhat-lt/
-        cxUsername: sudha
-        cxPassword: Ramji@2811
-        cxTeam: \CxServer\SP\Company\TeamA
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Checkmarx Security Scan
+        uses: miguelfreitas93/checkmarx-github-action@v1  # Ensure you are using a valid version
+        with:
+          checkmarx_url: "http://sudhat-lt/"
+          team: "/CxServer"
+          checkmarx_username: sudha
+          checkmarx_password: Ramji@2811
+          checkmarx_client_secret: ${{ secrets.CHECKMARX_CLIENT_SECRET }}
+          project: "YOUR_PROJECT_ID"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          scanners: "sast"
