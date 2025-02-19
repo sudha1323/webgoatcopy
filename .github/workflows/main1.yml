@@ -3,10 +3,10 @@ name: Security Scan and Deployment Pipeline
 on:
   push:
     branches:
-      - main  # Trigger the pipeline on pushes to the main branch
+      - main
   pull_request:
     branches:
-      - main  # Trigger on PRs to the main branch
+      - main
 
 jobs:
   build-and-scan:
@@ -16,7 +16,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         
-      # Setup Java JDK
       - name: Set up JDK 21
         uses: actions/setup-java@v4.2.1
         with:
@@ -24,7 +23,6 @@ jobs:
           java-version: 21
           architecture: x64
 
-      # Cache Maven packages
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
@@ -32,27 +30,27 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-
 
-      # Build Step
       - name: Build the project
         run: |
           echo "Running build..."
-          mvn clean install  # Example for Maven projects
+          mvn clean install
 
-      # Test Step
       - name: Run tests
         run: |
           echo "Running tests..."
-          mvn test  # Example for Maven projects
+          mvn test
 
-      # Debug Maven build (this step was incorrectly indented)
       - name: Debug Maven build
         run: |
-          mvn clean install || exit 254  # Force exit code if the build fails
+          mvn clean install || exit 254
 
-      # Security Scan Step
+      - name: Expose local server using ngrok (replace with your port)
+        run: |
+          nohup ngrok http 8982 &  # Make sure to replace 8080 with your local port
+
       - name: Run Checkmarx Security Scan
         env:
-          CHECKMARX_URL: "http://localhost:8088"
+          CHECKMARX_URL: ${{https://f74d-27-107-51-58.ngrok-free.app}}  # Use the ngrok URL
           CHECKMARX_API_TOKEN: ${{ secrets.CHECKMARX_API_TOKEN }}
           CHECKMARX_USERNAME: "sudha"
           CHECKMARX_PASSWORD: "Ramji@2811"
@@ -72,52 +70,6 @@ jobs:
                   "configuration": "Default Configuration",
                   "filter": {"categories": ["SQL_Injection", "Stored_XSS", "Reflected_XSS_All_Clients"]}
                 }'
-
-  checkmarx-cxflow:
-    needs: build-and-scan
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Checkmarx CxFlow Action
-        uses: checkmarx-ts/checkmarx-cxflow-github-action@v2.3
-        with:
-          checkmarx_url: "http://sudhat-lt/CxWebClient"  # Your Checkmarx base URL
-          team: "/CxServer" # Specify your Checkmarx team
-          checkmarx_username: "sudha"  # Your Checkmarx username
-          checkmarx_password: "Ramji@2811"  # Your Checkmarx password (store in secrets ideally)
-          checkmarx_client_secret: "014DF517-39D1-4453-B7B3-9930C563627C"  # Your Checkmarx client secret
-          project: "YOUR_PROJECT_ID"  # Replace with actual project ID
-          github_token: ${{ secrets.GITHUB_TOKEN }}  # Use the default GitHub token
-          scanners: "sast"  # Vulnerability Scanners (e.g., sast, sca, cxgo)
-
-  deploy:
-    needs: checkmarx-cxflow
-    runs-on: ubuntu-latest
-    environment:
-      name: staging
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Deploy to Staging
-        run: |
-          echo "Deploying to staging environment..."
-          ./deploy-to-staging.sh  # Replace with your script or commands
-
-  production-deploy:
-    needs: deploy
-    runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: https://your-production-url.com  # Optional production URL
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
       - name: Deploy to Production
         run: |
