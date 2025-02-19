@@ -59,7 +59,7 @@ jobs:
           CHECKMARX_SCOPE: "access_control_api sast_rest_api"
         run: |
           echo "Running Checkmarx security scan..."
-          curl -v -X POST "http://sudhat-lt/cxrestapi/sast/scans" \
+          curl -v -X POST "${CHECKMARX_URL}/cxrestapi/sast/scans" \
             -H "Authorization: Bearer ${CHECKMARX_API_TOKEN}" \
             -H "Content-Type: application/json" \
             -d '{
