@@ -7,7 +7,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Checkmarx Action
-      uses: miguelfreitas93/checkmarx-github-action@main
+      uses: miguelfreitas93/checkmarx-github-action@v1
       with:
         cxServer: http://sudhat-lt/
         cxUsername: sudha
