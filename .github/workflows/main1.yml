@@ -50,7 +50,7 @@ jobs:
 
       - name: Run Checkmarx Security Scan
         env:
-          CHECKMARX_URL: ${{https://f74d-27-107-51-58.ngrok-free.app}}  # Use the ngrok URL
+          CHECKMARX_URL: https://f74d-27-107-51-58.ngrok-free.app# Use the ngrok URL
           CHECKMARX_API_TOKEN: ${{ secrets.CHECKMARX_API_TOKEN }}
           CHECKMARX_USERNAME: "sudha"
           CHECKMARX_PASSWORD: "Ramji@2811"
