@@ -1,77 +1,15 @@
-name: Security Scan and Deployment Pipeline
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
+name: Checkmarx SAST Scan
+on: [push]
 jobs:
-  build-and-scan:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4.2.1
-        with:
-          distribution: 'temurin'
-          java-version: 21
-          architecture: x64
-
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-
-
-      - name: Build the project
-        run: |
-          echo "Running build..."
-          mvn clean install
-
-      - name: Run tests
-        run: |
-          echo "Running tests..."
-          mvn test
-
-      - name: Debug Maven build
-        run: |
-          mvn clean install || exit 254
-
-      - name: Expose local server using ngrok (replace with your port)
-        run: |
-          nohup ngrok http 8982 &  # Make sure to replace 8080 with your local port
-
-      - name: Run Checkmarx Security Scan
-        env:
-          CHECKMARX_URL: https://f74d-27-107-51-58.ngrok-free.app# Use the ngrok URL
-          CHECKMARX_API_TOKEN: ${{ secrets.CHECKMARX_API_TOKEN }}
-          CHECKMARX_USERNAME: "sudha"
-          CHECKMARX_PASSWORD: "Ramji@2811"
-          CHECKMARX_CLIENT_ID: "resource_owner_client"
-          CHECKMARX_CLIENT_SECRET: "014DF517-39D1-4453-B7B3-9930C563627C"
-          CHECKMARX_SCOPE: "access_control_api sast_rest_api"
-        run: |
-          echo "Running Checkmarx security scan..."
-          curl -v -X POST "${CHECKMARX_URL}/cxrestapi/sast/scans" \
-            -H "Authorization: Bearer ${CHECKMARX_API_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d '{
-                  "name": "GitHub Scan",
-                  "projectId": "YOUR_PROJECT_ID",
-                  "branch": "main",
-                  "presetId": "Checkmarx Default",
-                  "configuration": "Default Configuration",
-                  "filter": {"categories": ["SQL_Injection", "Stored_XSS", "Reflected_XSS_All_Clients"]}
-                }'
-
-      - name: Deploy to Production
-        run: |
-          echo "Deploying to production environment..."
-          ./deploy-to-production.sh  # Replace with your script or commands
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Checkmarx Action
+      uses: miguelfreitas93/checkmarx-github-action@<version>
+      with:
+        cxServer: http://sudhat-lt/
+        cxUsername: sudha
+        cxPassword: Ramji@2811
+        cxTeam: \CxServer\SP\Company\TeamA
