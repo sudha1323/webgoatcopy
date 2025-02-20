@@ -8,7 +8,7 @@ on:
     branches:
       - main  # Trigger on PRs to the main branch
 
-# Azure Pipeline
+
 trigger:
   - main
 
