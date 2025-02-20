@@ -19,3 +19,4 @@ jobs:
           checkmarx_password: ${{secrets.CHECKMARX_PASSWORD}}
           checkmarx_client_secret: ${{secrets.CXSAST_CLIENT_SECRET}}
           project: github_chartJS
+          
