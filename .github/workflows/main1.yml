@@ -14,10 +14,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Run Checkmarx Security Scan
-        uses: miguelfreitas93/checkmarx-github-action@v1  # Ensure you are using a valid version
+        uses: miguelfreitas93/checkmarx-github-action@v3  # Ensure you are using a valid version
         with:
           checkmarx_url: "http://sudhat-lt/"
           team: "/CxServer"
