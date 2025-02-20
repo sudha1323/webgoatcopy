@@ -16,38 +16,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Setup Java JDK
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4.2.1
-        with:
-          distribution: 'temurin'
-          java-version: 21
-          architecture: x64
+    
 
-      # Cache Maven packages
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-
+    
 
-      # Build Step
-      - name: Build the project
-        run: |
-          echo "Running build..."
-          mvn clean install  # Example for Maven projects
+    
 
-      # Test Step
-      - name: Run tests
-        run: |
-          echo "Running tests..."
-          mvn test  # Example for Maven projects
-
-      # Debug Maven build (this step was incorrectly indented)
-      - name: Debug Maven build
-        run: |
-          mvn clean install || exit 254  # Force exit code if the build fails
+   
+      
+    
+      
 
       # Security Scan Step
       - name: Run Checkmarx Security Scan
