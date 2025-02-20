@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Run Checkmarx Security Scan
-        uses: miguelfreitas93/checkmarx-github-action@v2  # Ensure you are using a valid version
+        uses: miguelfreitas93/checkmarx-github-action@v2.322.0  # Ensure you are using a valid version
         with:
           checkmarx_url: "http://sudhat-lt/"
           team: "/CxServer"
