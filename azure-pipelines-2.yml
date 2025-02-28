@@ -7,25 +7,9 @@ pool:
 steps:
  
  
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
- 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
- 
-- task: Application security testing@2024
 
+- task: Checkmarx AST@3
   inputs:
-    projectName: 'azureDemo'
-    enableProxy: false
-    enableSastScan: true
-    enableSastBranching: false
-    incScan: false
-    generatePDFReport: true
-    enableDependencyScan: false
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
+    CheckmarxService: 'cxone_ast'
+    projectName: '$(Build.Repository.Name)'
+    branchName: '$(Build.SourceBranchName)'
