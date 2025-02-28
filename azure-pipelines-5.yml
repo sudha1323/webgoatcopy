@@ -1,24 +1,24 @@
 # Starter pipeline
-- task: Checkmarx AST@3
-  inputs:
-    CheckmarxService: 'cxone_ast'
-    projectName: '$(Build.Repository.Name)'
-    branchName: '$(Build.SourceBranchName)'
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+  - main
 
 pool:
-  vmImage: default
+  vmImage: 'default'  # You can specify the VM image to use; replace with 'default' if needed.
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  # Checkmarx AST task for static analysis
+  - task: Checkmarx AST@3
+    inputs:
+      CheckmarxService: 'cxone_ast'
+      projectName: '$(Build.Repository.Name)'
+      branchName: '$(Build.SourceBranchName)'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  # Simple script to display a hello world message
+  - script: echo Hello, world!
+    displayName: 'Run a one-line script'
+
+  # Multi-line script to display additional messages
+  - script: |
+      echo Add other tasks to build, test, and deploy your project.
+      echo See https://aka.ms/yaml
+    displayName: 'Run a multi-line script'
