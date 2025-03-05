@@ -5,7 +5,7 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
     branches:
-      - master
+      
       - main
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -23,7 +23,7 @@ jobs:
       - name: Checkmarx scan
         uses: checkmarx/ast-github-action@main
         with:
-          base_uri: https://eu.iam.checkmarx.net
+          base_uri: https://eu.ast.checkmarx.net
           cx_client_id: ${{ secrets.CXCLIENT_ID }}
           cx_client_secret: ${{ secrets.CXCLIENT_SECRET }}
           cx_tenant: ${{ secrets.TENANT }} # This should be replaced by users' tenant name
