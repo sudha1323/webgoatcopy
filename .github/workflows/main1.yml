@@ -52,7 +52,7 @@ jobs:
 
           # The path to the ZAP configuration file
 
-          config: ../altoro_mutual_config.yaml   # need to chk yaml
+          config: ./altoro_mutual_config.yaml   # need to chk yaml
 
           # The base URL for the Checkmarx One Servers
 
