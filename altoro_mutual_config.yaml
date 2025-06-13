@@ -1,0 +1,85 @@
+env:
+    contexts:
+        - authentication:
+            method: form
+            parameters:
+                loginPageUrl: http://testfire.net/login.jsp
+                loginRequestBody: username={%username%}&password={%password%}
+                loginRequestUrl: http://testfire.net/login.jsp
+            verification:
+                loggedInRegex: Log out
+                loggedOutRegex: Log in
+                method: poll
+                pollFrequency: 60
+                pollUnits: requests
+                pollUrl: http://testfire.net/login.jsp
+          excludePaths: []
+          includePaths:
+            - http://testfire.net/.*
+          name: Default Context
+          sessionManagement:
+            method: cookie
+            parameters: {}
+          technology:
+            exclude: []
+          urls:
+            - http://testfire.net/
+          users:
+            - credentials:
+                password: admin
+                username: admin
+              name: authentication user
+    parameters:
+        failOnError: true
+        failOnWarning: false
+        progressToStdout: true
+    vars: {}
+jobs:
+    - name: passiveScan-config
+      parameters:
+        enableTags: false
+        scanOnlyInScope: true
+      rules: []
+      type: passiveScan-config
+    - name: spider
+      parameters:
+        context: Default Context
+        maxChildren: 0
+        maxDepth: 0
+        maxDuration: 0
+        user: authentication user
+      type: spider
+    - name: spiderAjax
+      parameters:
+        context: Default Context
+        maxCrawlDepth: 10
+        maxDuration: 60
+        numberOfBrowsers: 4
+        runOnlyIfModern: false
+        user: authentication user
+      type: spiderAjax
+    - name: passiveScan-wait
+      parameters: {}
+      type: passiveScan-wait
+    - name: activeScan
+      parameters:
+        context: Default Context
+        threadPerHost: 4
+        user: authentication user
+      policyDefinition:
+        rules: []
+      type: activeScan
+    - name: report-pdf
+      parameters:
+        reportDescription: ""
+        reportDir: /dast_home/dast-output-1018320532
+        reportFile: ZAP-Report
+        reportTitle: ZAP Scanning Report
+        template: traditional-json-plus
+      type: report
+    - name: export
+      parameters:
+        fileName: /dast_home/dast-output-1018320532/ZAP-Sites-Tree.yaml
+        source: sitestree
+        type: yaml
+      type: export
